@@ -1,7 +1,7 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: sparkel-sykepengeperioder
+  name: sparkel-pleiepenger
   namespace: tbd
   labels:
     team: tbd
@@ -35,9 +35,9 @@ spec:
     enabled: true
     paths:
       - mountPath: /var/run/secrets/nais.io/vault
-        kvPath: /kv/prod/fss/sparkel-sykepengeperioder/tbd
+        kvPath: /kv/prod/fss/sparkel-pleiepenger/tbd
       - mountPath: /var/run/secrets/nais.io/azure
-        kvPath: /azuread/data/prod/creds/sparkel-sykepengeperioder
+        kvPath: /azuread/data/prod/creds/sparkel-pleiepenger
       - mountPath: /var/run/secrets/nais.io/service_user
         kvPath: /serviceuser/data/prod/srvsparkelsykepeng
   env:
@@ -51,7 +51,7 @@ spec:
     value: 62366534-1ec3-4962-8869-9b5535279d0b
   - name: AZURE_TENANT_BASEURL
     value: https://login.microsoftonline.com
-  - name: INFOTRYGD_SCOPE
-    value: api://847deffa-0b46-4b8f-ae79-c7773ee3dfb3/.default
-  - name: INFOTRYGD_URL
-    value: http://infotrygd-sykepenger.default.svc.nais.local
+  - name: PLEIEPENGER_SCOPE
+    value:
+  - name: PLEIEPENGER_URL
+    value:

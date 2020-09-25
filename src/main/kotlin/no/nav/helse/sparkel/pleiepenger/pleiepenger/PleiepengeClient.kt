@@ -1,18 +1,15 @@
-package no.nav.helse.sparkel.sykepengeperioder.infotrygd
+package no.nav.helse.sparkel.pleiepenger.pleiepenger
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
-import net.logstash.logback.argument.StructuredArguments.keyValue
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-class InfotrygdClient(
+class PleiepengeClient(
     private val baseUrl: String,
     private val accesstokenScope: String,
     private val azureClient: AzureClient
@@ -23,7 +20,8 @@ class InfotrygdClient(
         private val tjenestekallLog = LoggerFactory.getLogger("tjenestekall")
     }
 
-    internal fun hentHistorikk(
+    //TODO: fix
+    internal fun hentPleiepenger(
         behovId: String,
         vedtaksperiodeId: String,
         fnr: String,
@@ -31,9 +29,7 @@ class InfotrygdClient(
         tom: LocalDate
     ): ArrayNode {
         val url =
-            "${baseUrl}/v1/hentSykepengerListe?fnr=$fnr&fraDato=${fom.format(DateTimeFormatter.ISO_DATE)}&tilDato=${tom.format(
-                DateTimeFormatter.ISO_DATE
-            )}"
+            "${baseUrl}/"
         val (responseCode, responseBody) = with(URL(url).openConnection() as HttpURLConnection) {
             requestMethod = "GET"
             connectTimeout = 10000
@@ -45,14 +41,8 @@ class InfotrygdClient(
             responseCode to stream?.bufferedReader()?.readText()
         }
 
-        tjenestekallLog.info(
-            "svar fra Infotrygd: url=$url responseCode=$responseCode responseBody=$responseBody",
-            keyValue("id", behovId),
-            keyValue("vedtaksperiodeId", vedtaksperiodeId)
-        )
-
         if (responseCode >= 300 || responseBody == null) {
-            throw RuntimeException("unknown error (responseCode=$responseCode) from Infotrygd")
+            throw RuntimeException("unknown error (responseCode=$responseCode) from pleiepenger")
         }
 
         val jsonNode = objectMapper.readTree(responseBody)
@@ -60,7 +50,7 @@ class InfotrygdClient(
         try {
             MDC.put("id", behovId)
             MDC.put("vedtaksperiodeId", vedtaksperiodeId)
-            return jsonNode["sykmeldingsperioder"] as ArrayNode
+            return jsonNode["vedtak"] as ArrayNode
         } finally {
             MDC.remove("id")
             MDC.remove("vedtaksperiodeID")

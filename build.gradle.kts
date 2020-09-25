@@ -43,7 +43,7 @@ tasks {
         archiveBaseName.set("app")
 
         manifest {
-            attributes["Main-Class"] = "no.nav.helse.sparkel.sykepengeperioder.AppKt"
+            attributes["Main-Class"] = "no.nav.helse.sparkel.pleiepenger.AppKt"
             attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
                 it.name
             }

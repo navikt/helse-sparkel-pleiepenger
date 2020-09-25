@@ -1,15 +1,12 @@
-package no.nav.helse.sparkel.sykepengeperioder
+package no.nav.helse.sparkel.pleiepenger
 
 import com.fasterxml.jackson.databind.JsonNode
-import net.logstash.logback.argument.StructuredArguments
 import net.logstash.logback.argument.StructuredArguments.keyValue
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.asLocalDate
-import no.nav.helse.sparkel.sykepengeperioder.infotrygd.InfotrygdClient
+import no.nav.helse.sparkel.pleiepenger.pleiepenger.PleiepengeClient
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
-internal class InfotrygdService(private val infotrygdClient: InfotrygdClient) {
+internal class PleiepengerService(private val pleiepengeClient: PleiepengeClient) {
 
     private val sikkerlogg = LoggerFactory.getLogger("tjenestekall")
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -22,7 +19,7 @@ internal class InfotrygdService(private val infotrygdClient: InfotrygdClient) {
         tom: LocalDate
     ): JsonNode? {
         try {
-            val historikk = infotrygdClient.hentHistorikk(
+            val pleiepenger = pleiepengeClient.hentPleiepenger(
                 behovId = behovId,
                 vedtaksperiodeId = vedtaksperiodeId,
                 fnr = fødselsnummer,
@@ -39,15 +36,15 @@ internal class InfotrygdService(private val infotrygdClient: InfotrygdClient) {
                 keyValue("id", behovId),
                 keyValue("vedtaksperiodeId", vedtaksperiodeId)
             )
-            return historikk
+            return pleiepenger
         } catch (err: Exception) {
             log.warn(
-                "feil ved henting av infotrygd-data: ${err.message} for {}",
+                "feil ved henting av pleiepenger-data: ${err.message} for {}",
                 keyValue("vedtaksperiodeId", vedtaksperiodeId),
                 err
             )
             sikkerlogg.warn(
-                "feil ved henting av infotrygd-data: ${err.message} for {}",
+                "feil ved henting av pleiepenger-data: ${err.message} for {}",
                 keyValue("vedtaksperiodeId", vedtaksperiodeId),
                 err
             )

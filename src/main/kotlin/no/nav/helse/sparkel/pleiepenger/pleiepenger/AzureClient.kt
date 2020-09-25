@@ -1,4 +1,4 @@
-package no.nav.helse.sparkel.sykepengeperioder.infotrygd
+package no.nav.helse.sparkel.pleiepenger.pleiepenger
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory

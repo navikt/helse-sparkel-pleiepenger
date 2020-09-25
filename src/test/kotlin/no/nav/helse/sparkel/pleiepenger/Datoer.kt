@@ -1,4 +1,4 @@
-package no.nav.helse.sparkel.sykepengeperioder
+package no.nav.helse.sparkel.pleiepenger
 
 import java.time.LocalDate
 
