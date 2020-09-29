@@ -15,8 +15,8 @@ fun main() {
 internal fun createApp(env: Map<String, String>): RapidsConnection {
     val azureClient = AzureClient(
         tenantUrl = "${env.getValue("AZURE_TENANT_BASEURL")}/${env.getValue("AZURE_TENANT_ID")}",
-        clientId = "/var/run/secrets/nais.io/azure/azure_app_client_id".readFile() ?: env.getValue("AZURE_CLIENT_ID"),
-        clientSecret = "/var/run/secrets/nais.io/azure/azure_app_client_secret".readFile() ?: env.getValue("AZURE_CLIENT_SECRET")
+        clientId = "/var/run/secrets/nais.io/azure/AZURE_APP_CLIENT_ID".readFile() ?: env.getValue("AZURE_CLIENT_ID"),
+        clientSecret = "/var/run/secrets/nais.io/azure/AZURE_APP_CLIENT_SECRET".readFile() ?: env.getValue("AZURE_CLIENT_SECRET")
     )
     val pleiepengeClient = PleiepengeClient(
         baseUrl = env.getValue("PLEIEPENGER_URL"),
