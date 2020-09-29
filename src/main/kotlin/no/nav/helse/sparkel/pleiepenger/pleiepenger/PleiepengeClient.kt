@@ -36,6 +36,7 @@ class PleiepengeClient(
             readTimeout = 10000
             setRequestProperty("Authorization", "Bearer ${azureClient.getToken(accesstokenScope).accessToken}")
             setRequestProperty("Accept", "application/json")
+            setRequestProperty("Content-Type", "application/json")
 
             doOutput = true
             objectMapper.writeValue(outputStream, requestBody)

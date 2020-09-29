@@ -158,6 +158,7 @@ internal class PleiepengerløserTest {
         stubFor(
             post(urlPathEqualTo("/vedtak"))
                 .withHeader("Accept", equalTo("application/json"))
+                .withHeader("Content-Type", equalTo("application/json"))
                 .withRequestBody(matchingJsonPath("identitetsnummer", equalTo("fnr")))
                 .willReturn(
                     aResponse()
@@ -179,6 +180,7 @@ internal class PleiepengerløserTest {
         stubFor(
             post(urlPathEqualTo("/vedtak"))
                 .withHeader("Accept", equalTo("application/json"))
+                .withHeader("Content-Type", equalTo("application/json"))
                 .withRequestBody(matchingJsonPath("identitetsnummer", equalTo("ikkeTilgang")))
                 .willReturn(
                     aResponse()
