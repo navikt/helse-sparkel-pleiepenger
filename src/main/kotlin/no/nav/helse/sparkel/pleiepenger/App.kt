@@ -26,7 +26,7 @@ internal fun createApp(env: Map<String, String>): RapidsConnection {
     val pleiepengerService = PleiepengerService(pleiepengeClient)
 
     return RapidApplication.create(env).apply {
-        Pleiepengerløser(this, pleiepengerService)
+//        Pleiepengerløser(this, pleiepengerService)
     }
 }
 
