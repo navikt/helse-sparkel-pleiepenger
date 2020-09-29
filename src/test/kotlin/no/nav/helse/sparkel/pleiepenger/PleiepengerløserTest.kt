@@ -13,8 +13,8 @@ import no.nav.helse.sparkel.pleiepenger.pleiepenger.PleiepengeClient
 import no.nav.helse.sparkel.pleiepenger.pleiepenger.Pleiepengerperiode
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestInstance.Lifecycle
-import java.time.LocalDate
 
 @TestInstance(Lifecycle.PER_CLASS)
 internal class PleiepengerløserTest {
@@ -25,8 +25,8 @@ internal class PleiepengerløserTest {
 
     private val wireMockServer: WireMockServer = WireMockServer(WireMockConfiguration.options().dynamicPort())
     private val objectMapper = jacksonObjectMapper()
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .registerModule(JavaTimeModule())
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .registerModule(JavaTimeModule())
 
     private lateinit var sendtMelding: JsonNode
     private lateinit var service: PleiepengerService
@@ -60,15 +60,15 @@ internal class PleiepengerløserTest {
         configureFor(create().port(wireMockServer.port()).build())
         stubEksterneEndepunkt()
         service = PleiepengerService(
-                PleiepengeClient(
-                        baseUrl = wireMockServer.baseUrl(),
-                        accesstokenScope = "a_scope",
-                        azureClient = AzureClient(
-                                tenantUrl = "${wireMockServer.baseUrl()}/AZURE_TENANT_ID",
-                                clientId = "client_id",
-                                clientSecret = "client_secret"
-                        )
+            PleiepengeClient(
+                baseUrl = wireMockServer.baseUrl(),
+                accesstokenScope = "a_scope",
+                azureClient = AzureClient(
+                    tenantUrl = "${wireMockServer.baseUrl()}/AZURE_TENANT_ID",
+                    clientId = "client_id",
+                    clientSecret = "client_secret"
                 )
+            )
         )
     }
 
@@ -84,11 +84,20 @@ internal class PleiepengerløserTest {
 
     @Test
     fun `løser behov`() {
-        testBehov(enkeltBehovV1())
+        testBehov(enkeltBehov())
 
         val perioder = sendtMelding.løsning()
 
         assertEquals(1, perioder.size)
+    }
+
+    @Test
+    fun `returnerer tom liste hvis ikke tilgang til Infotrygd`() {
+        testBehov(ikkeTilgangBehov())
+
+        val perioder = sendtMelding.løsning()
+
+        assertTrue(perioder.isEmpty())
     }
 
     private fun JsonNode.løsning() = this.path("@løsning").path(Pleiepengerløser.behov).map {
@@ -100,8 +109,8 @@ internal class PleiepengerløserTest {
         rapid.sendTestMessage(behov)
     }
 
-    private fun enkeltBehovV1() =
-            """
+    private fun enkeltBehov() =
+        """
         {
             "@event_name" : "behov",
             "@behov" : [ "Pleiepenger" ],
@@ -113,33 +122,49 @@ internal class PleiepengerløserTest {
             "pleiepengerFom" : "2017-05-18",
             "pleiepengerTom" : "2020-05-18"
         }
-        """.trimIndent()
+        """
+
+    private fun ikkeTilgangBehov() =
+        """
+        {
+            "@event_name" : "behov",
+            "@behov" : [ "Pleiepenger" ],
+            "@id" : "id",
+            "@opprettet" : "2020-05-18",
+            "spleisBehovId" : "spleisBehovId",
+            "vedtaksperiodeId" : "vedtaksperiodeId",
+            "fødselsnummer" : "ikkeTilgang",
+            "pleiepengerFom" : "2017-05-18",
+            "pleiepengerTom" : "2020-05-18"
+        }
+        """
 
     private fun stubEksterneEndepunkt() {
         stubFor(
-                post(urlMatching("/AZURE_TENANT_ID/oauth2/v2.0/token"))
-                        .willReturn(
-                                aResponse()
-                                        .withStatus(200)
-                                        .withHeader("Content-Type", "application/json")
-                                        .withBody(
-                                                """{
+            post(urlMatching("/AZURE_TENANT_ID/oauth2/v2.0/token"))
+                .willReturn(
+                    aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(
+                            """{
                         "token_type": "Bearer",
                         "expires_in": 3599,
                         "access_token": "1234abc"
                     }"""
-                                        )
                         )
+                )
         )
         stubFor(
-                post(urlPathEqualTo("/vedtak"))
-                        .withHeader("Accept", equalTo("application/json"))
-                        .willReturn(
-                                aResponse()
-                                        .withStatus(200)
-                                        .withHeader("Content-Type", "application/json")
-                                        .withBody(
-                                                """{
+            post(urlPathEqualTo("/vedtak"))
+                .withHeader("Accept", equalTo("application/json"))
+                .withRequestBody(matchingJsonPath("identitetsnummer", equalTo("fnr")))
+                .willReturn(
+                    aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(
+                            """{
                                       "vedtak": [
                                         {
                                           "fom": "2018-01-01",
@@ -148,8 +173,17 @@ internal class PleiepengerløserTest {
                                         }
                                       ]
                                     }"""
-                                        )
                         )
+                )
+        )
+        stubFor(
+            post(urlPathEqualTo("/vedtak"))
+                .withHeader("Accept", equalTo("application/json"))
+                .withRequestBody(matchingJsonPath("identitetsnummer", equalTo("ikkeTilgang")))
+                .willReturn(
+                    aResponse()
+                        .withStatus(401)
+                )
         )
     }
 }

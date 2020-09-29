@@ -41,9 +41,9 @@ internal class Pleiepengerløser(
                 packet["fødselsnummer"].asText(),
                 packet["pleiepengerFom"].asLocalDate(),
                 packet["pleiepengerTom"].asLocalDate()
-        )?.let { løsning ->
+        ).let { løsning ->
             packet["@løsning"] = mapOf(
-                    behov to løsning["vedtak"].map { Pleiepengerperiode(it) }
+                    behov to (løsning?.get("vedtak")?.map { Pleiepengerperiode(it) } ?: emptyList())
             )
             context.send(packet.toJson().also { json ->
                 sikkerlogg.info(
