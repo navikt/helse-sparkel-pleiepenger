@@ -39,8 +39,6 @@ spec:
     paths:
       - mountPath: /var/run/secrets/nais.io/vault
         kvPath: /kv/prod/fss/sparkel-pleiepenger/tbd
-      - mountPath: /var/run/secrets/nais.io/azure
-        kvPath: /azuread/data/prod/creds/sparkel-pleiepenger
       - mountPath: /var/run/secrets/nais.io/service_user
         kvPath: /serviceuser/data/prod/srvsparkelpleiepenge
   env:
