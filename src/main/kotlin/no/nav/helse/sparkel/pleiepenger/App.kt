@@ -15,8 +15,8 @@ fun main() {
 internal fun createApp(env: Map<String, String>): RapidsConnection {
     val azureClient = AzureClient(
         tenantUrl = "${env.getValue("AZURE_TENANT_BASEURL")}/${env.getValue("AZURE_TENANT_ID")}",
-        clientId = "/var/run/secrets/nais.io/azure/AZURE_APP_CLIENT_ID".readFile() ?: env.getValue("AZURE_CLIENT_ID"),
-        clientSecret = "/var/run/secrets/nais.io/azure/AZURE_APP_CLIENT_SECRET".readFile() ?: env.getValue("AZURE_CLIENT_SECRET")
+        clientId = env.getValue("AZURE_APP_CLIENT_ID"),
+        clientSecret = env.getValue("AZURE_APP_CLIENT_SECRET")
     )
     val pleiepengeClient = PleiepengeClient(
         baseUrl = env.getValue("PLEIEPENGER_URL"),
@@ -26,13 +26,6 @@ internal fun createApp(env: Map<String, String>): RapidsConnection {
     val pleiepengerService = PleiepengerService(pleiepengeClient)
 
     return RapidApplication.create(env).apply {
-//        Pleiepengerløser(this, pleiepengerService)
+        Pleiepengerløser(this, pleiepengerService)
     }
 }
-
-private fun String.readFile() =
-    try {
-        File(this).readText(Charsets.UTF_8)
-    } catch (err: FileNotFoundException) {
-        null
-    }

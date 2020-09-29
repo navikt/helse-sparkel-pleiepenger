@@ -10,11 +10,9 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.sparkel.pleiepenger.pleiepenger.AzureClient
 import no.nav.helse.sparkel.pleiepenger.pleiepenger.PleiepengeClient
-import org.junit.jupiter.api.AfterAll
+import no.nav.helse.sparkel.pleiepenger.pleiepenger.Pleiepengerperiode
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import java.time.LocalDate
 
@@ -27,8 +25,8 @@ internal class PleiepengerløserTest {
 
     private val wireMockServer: WireMockServer = WireMockServer(WireMockConfiguration.options().dynamicPort())
     private val objectMapper = jacksonObjectMapper()
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .registerModule(JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .registerModule(JavaTimeModule())
 
     private lateinit var sendtMelding: JsonNode
     private lateinit var service: PleiepengerService
@@ -62,15 +60,15 @@ internal class PleiepengerløserTest {
         configureFor(create().port(wireMockServer.port()).build())
         stubEksterneEndepunkt()
         service = PleiepengerService(
-            PleiepengeClient(
-                baseUrl = wireMockServer.baseUrl(),
-                accesstokenScope = "a_scope",
-                azureClient = AzureClient(
-                    tenantUrl = "${wireMockServer.baseUrl()}/AZURE_TENANT_ID",
-                    clientId = "client_id",
-                    clientSecret = "client_secret"
+                PleiepengeClient(
+                        baseUrl = wireMockServer.baseUrl(),
+                        accesstokenScope = "a_scope",
+                        azureClient = AzureClient(
+                                tenantUrl = "${wireMockServer.baseUrl()}/AZURE_TENANT_ID",
+                                clientId = "client_id",
+                                clientSecret = "client_secret"
+                        )
                 )
-            )
         )
     }
 
@@ -79,9 +77,22 @@ internal class PleiepengerløserTest {
         wireMockServer.stop()
     }
 
+    @BeforeEach
+    internal fun beforeEach() {
+        sendtMelding = objectMapper.createObjectNode()
+    }
+
     @Test
     fun `løser behov`() {
+        testBehov(enkeltBehovV1())
 
+        val perioder = sendtMelding.løsning()
+
+        assertEquals(1, perioder.size)
+    }
+
+    private fun JsonNode.løsning() = this.path("@løsning").path(Pleiepengerløser.behov).map {
+        Pleiepengerperiode(it)
     }
 
     private fun testBehov(behov: String) {
@@ -89,42 +100,56 @@ internal class PleiepengerløserTest {
         rapid.sendTestMessage(behov)
     }
 
+    private fun enkeltBehovV1() =
+            """
+        {
+            "@event_name" : "behov",
+            "@behov" : [ "Pleiepenger" ],
+            "@id" : "id",
+            "@opprettet" : "2020-05-18",
+            "spleisBehovId" : "spleisBehovId",
+            "vedtaksperiodeId" : "vedtaksperiodeId",
+            "fødselsnummer" : "fnr",
+            "pleiepengerFom" : "2017-05-18",
+            "pleiepengerTom" : "2020-05-18"
+        }
+        """.trimIndent()
 
     private fun stubEksterneEndepunkt() {
         stubFor(
-            post(urlMatching("/AZURE_TENANT_ID/oauth2/v2.0/token"))
-                .willReturn(
-                    aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(
-                            """{
+                post(urlMatching("/AZURE_TENANT_ID/oauth2/v2.0/token"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(200)
+                                        .withHeader("Content-Type", "application/json")
+                                        .withBody(
+                                                """{
                         "token_type": "Bearer",
                         "expires_in": 3599,
                         "access_token": "1234abc"
                     }"""
+                                        )
                         )
-                )
         )
         stubFor(
-            get(urlPathEqualTo("/vedtak"))
-                .withHeader("Accept", equalTo("application/json"))
-                .willReturn(
-                    aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(
-                            """{
+                post(urlPathEqualTo("/vedtak"))
+                        .withHeader("Accept", equalTo("application/json"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(200)
+                                        .withHeader("Content-Type", "application/json")
+                                        .withBody(
+                                                """{
                                       "vedtak": [
                                         {
-                                          "fom": 2018-01-01,
+                                          "fom": "2018-01-01",
                                           "tom": "2018-01-31",
-                                          "grad": 100,
+                                          "grad": 100
                                         }
                                       ]
                                     }"""
+                                        )
                         )
-                )
         )
     }
 }
