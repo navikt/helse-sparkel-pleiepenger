@@ -31,6 +31,7 @@ spec:
   azure:
     application:
       enabled: true
+      tenant: trygdeetaten.no
   webproxy: true
   secureLogs:
     enabled: true
