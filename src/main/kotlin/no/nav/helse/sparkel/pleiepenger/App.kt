@@ -3,9 +3,7 @@ package no.nav.helse.sparkel.pleiepenger
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.sparkel.pleiepenger.pleiepenger.AzureClient
-import no.nav.helse.sparkel.pleiepenger.pleiepenger.PleiepengeClient
-import java.io.File
-import java.io.FileNotFoundException
+import no.nav.helse.sparkel.pleiepenger.pleiepenger.InfotrygdClient
 
 fun main() {
     val app = createApp(System.getenv())
@@ -18,14 +16,16 @@ internal fun createApp(env: Map<String, String>): RapidsConnection {
         clientId = env.getValue("AZURE_APP_CLIENT_ID"),
         clientSecret = env.getValue("AZURE_APP_CLIENT_SECRET")
     )
-    val pleiepengeClient = PleiepengeClient(
-        baseUrl = env.getValue("PLEIEPENGER_URL"),
-        accesstokenScope = env.getValue("PLEIEPENGER_SCOPE"),
+    val infotrygdClient = InfotrygdClient(
+        baseUrl = env.getValue("INFOTRYGD_URL"),
+        accesstokenScope = env.getValue("INFOTRYGD_SCOPE"),
         azureClient = azureClient
     )
-    val pleiepengerService = PleiepengerService(pleiepengeClient)
+    val infotrygdService = InfotrygdService(infotrygdClient)
 
     return RapidApplication.create(env).apply {
-        Pleiepengerløser(this, pleiepengerService)
+        Pleiepengerløser(this, infotrygdService)
+        Omsorgspengerløser(this, infotrygdService)
+        Opplæringspengerløser(this, infotrygdService)
     }
 }

@@ -6,7 +6,7 @@ import no.nav.helse.rapids_rivers.*
 import no.nav.helse.sparkel.pleiepenger.pleiepenger.Stønadsperiode
 import org.slf4j.LoggerFactory
 
-internal class Pleiepengerløser(
+internal class Opplæringspengerløser(
     rapidsConnection: RapidsConnection,
     private val infotrygdService: InfotrygdService
 ) : River.PacketListener {
@@ -14,7 +14,7 @@ internal class Pleiepengerløser(
     private val sikkerlogg = LoggerFactory.getLogger("tjenestekall")
 
     companion object {
-        const val behov = "Pleiepenger"
+        const val behov = "Opplæringspenger"
     }
 
     init {
@@ -24,8 +24,8 @@ internal class Pleiepengerløser(
             validate { it.requireKey("@id") }
             validate { it.requireKey("fødselsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.require("pleiepengerFom", JsonNode::asLocalDate) }
-            validate { it.require("pleiepengerTom", JsonNode::asLocalDate) }
+            validate { it.require("opplæringspengerFom", JsonNode::asLocalDate) }
+            validate { it.require("opplæringspengerTom", JsonNode::asLocalDate) }
         }.register(this)
     }
 
@@ -36,12 +36,12 @@ internal class Pleiepengerløser(
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         sikkerlogg.info("mottok melding: ${packet.toJson()}")
         infotrygdService.løsningForBehov(
-            Stønadsperiode.Stønadstype.PLEIEPENGER,
+            Stønadsperiode.Stønadstype.OPPLAERINGSPENGER,
             packet["@id"].asText(),
             packet["vedtaksperiodeId"].asText(),
             packet["fødselsnummer"].asText(),
-            packet["pleiepengerFom"].asLocalDate(),
-            packet["pleiepengerTom"].asLocalDate()
+            packet["opplæringspengerFom"].asLocalDate(),
+            packet["opplæringspengerTom"].asLocalDate()
         ).let { løsning ->
             packet["@løsning"] = mapOf(
                 behov to løsning

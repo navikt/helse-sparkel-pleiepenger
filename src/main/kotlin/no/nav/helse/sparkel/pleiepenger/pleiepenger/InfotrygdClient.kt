@@ -7,7 +7,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDate
 
-class PleiepengeClient(
+class InfotrygdClient(
     private val baseUrl: String,
     private val accesstokenScope: String,
     private val azureClient: AzureClient
@@ -17,20 +17,19 @@ class PleiepengeClient(
         private val objectMapper = ObjectMapper()
     }
 
-    internal fun hentPleiepenger(
+    internal fun hent(
+        stønadstype: Stønadsperiode.Stønadstype,
         fnr: String,
         fom: LocalDate,
         tom: LocalDate
     ): JsonNode {
-        val url = "${baseUrl}/vedtak"
-
         val requestBody = objectMapper.createObjectNode().apply {
             put("identitetsnummer", fnr)
             put("fom", fom.toString())
             put("tom", tom.toString())
         }
 
-        val (responseCode, responseBody) = with(URL(url).openConnection() as HttpURLConnection) {
+        val (responseCode, responseBody) = with(URL("$baseUrl${stønadstype.url}").openConnection() as HttpURLConnection) {
             requestMethod = "POST"
             connectTimeout = 10000
             readTimeout = 10000

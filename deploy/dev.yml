@@ -51,8 +51,7 @@ spec:
     value: 966ac572-f5b7-4bbe-aa88-c76419c0f851
   - name: AZURE_TENANT_BASEURL
     value: https://login.microsoftonline.com
-  - name: PLEIEPENGER_SCOPE
+  - name: INFOTRYGD_SCOPE
     value: api://32551525-c4dd-44ae-b906-2f8d8a00bb03/.default
-  - name: PLEIEPENGER_URL
+  - name: INFOTRYGD_URL
     value: http://infotrygd-grunnlag-paaroerende-sykdom.default.svc.nais.local
-
