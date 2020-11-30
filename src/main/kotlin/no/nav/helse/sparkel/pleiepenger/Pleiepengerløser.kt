@@ -24,8 +24,8 @@ internal class Pleiepengerløser(
             validate { it.requireKey("@id") }
             validate { it.requireKey("fødselsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.require("pleiepengerFom", JsonNode::asLocalDate) }
-            validate { it.require("pleiepengerTom", JsonNode::asLocalDate) }
+            validate { it.require("$behov.pleiepengerFom", JsonNode::asLocalDate) }
+            validate { it.require("$behov.pleiepengerTom", JsonNode::asLocalDate) }
         }.register(this)
     }
 
@@ -40,8 +40,8 @@ internal class Pleiepengerløser(
             packet["@id"].asText(),
             packet["vedtaksperiodeId"].asText(),
             packet["fødselsnummer"].asText(),
-            packet["pleiepengerFom"].asLocalDate(),
-            packet["pleiepengerTom"].asLocalDate()
+            packet["$behov.pleiepengerFom"].asLocalDate(),
+            packet["$behov.pleiepengerTom"].asLocalDate()
         ).let { løsning ->
             packet["@løsning"] = mapOf(
                 behov to løsning

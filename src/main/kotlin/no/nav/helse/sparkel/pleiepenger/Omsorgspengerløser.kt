@@ -24,8 +24,8 @@ internal class Omsorgspengerløser(
             validate { it.requireKey("@id") }
             validate { it.requireKey("fødselsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.require("omsorgspengerFom", JsonNode::asLocalDate) }
-            validate { it.require("omsorgspengerTom", JsonNode::asLocalDate) }
+            validate { it.require("$behov.omsorgspengerFom", JsonNode::asLocalDate) }
+            validate { it.require("$behov.omsorgspengerTom", JsonNode::asLocalDate) }
         }.register(this)
     }
 
@@ -40,8 +40,8 @@ internal class Omsorgspengerløser(
             packet["@id"].asText(),
             packet["vedtaksperiodeId"].asText(),
             packet["fødselsnummer"].asText(),
-            packet["omsorgspengerFom"].asLocalDate(),
-            packet["omsorgspengerTom"].asLocalDate()
+            packet["$behov.omsorgspengerFom"].asLocalDate(),
+            packet["$behov.omsorgspengerTom"].asLocalDate()
         ).let { løsning ->
             packet["@løsning"] = mapOf(
                 behov to løsning

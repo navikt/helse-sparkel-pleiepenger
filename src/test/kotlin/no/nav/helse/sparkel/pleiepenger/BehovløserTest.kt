@@ -131,12 +131,18 @@ internal class BehovløserTest {
             "spleisBehovId" : "spleisBehovId",
             "vedtaksperiodeId" : "vedtaksperiodeId",
             "fødselsnummer" : "fnr",
-            "pleiepengerFom" : "2017-05-18",
-            "pleiepengerTom" : "2020-05-18",
-            "omsorgspengerFom" : "2017-05-18",
-            "omsorgspengerTom" : "2020-05-18",
-            "opplæringspengerFom" : "2017-05-18",
-            "opplæringspengerTom" : "2020-05-18"
+            "Pleiepenger" : {
+                "pleiepengerFom" : "2017-05-18",
+                "pleiepengerTom" : "2020-05-18"
+            },
+            "Omsorgspenger": {
+                "omsorgspengerFom" : "2017-05-18",
+                "omsorgspengerTom" : "2020-05-18"
+            },
+            "Opplæringspenger": {
+                "opplæringspengerFom" : "2017-05-18",
+                "opplæringspengerTom" : "2020-05-18"
+            }
         }
         """
 
@@ -150,8 +156,10 @@ internal class BehovløserTest {
             "spleisBehovId" : "spleisBehovId",
             "vedtaksperiodeId" : "vedtaksperiodeId",
             "fødselsnummer" : "fnr",
-            "pleiepengerFom" : "2017-05-18",
-            "pleiepengerTom" : "2020-05-18"
+            "Pleiepenger": {
+                "pleiepengerFom" : "2017-05-18",
+                "pleiepengerTom" : "2020-05-18"
+            }
         }
         """
 
@@ -165,8 +173,10 @@ internal class BehovløserTest {
             "spleisBehovId" : "spleisBehovId",
             "vedtaksperiodeId" : "vedtaksperiodeId",
             "fødselsnummer" : "ikkeTilgang",
-            "pleiepengerFom" : "2017-05-18",
-            "pleiepengerTom" : "2020-05-18"
+            "Pleiepenger": {
+                "pleiepengerFom" : "2017-05-18",
+                "pleiepengerTom" : "2020-05-18"
+            }
         }
         """
 
@@ -180,8 +190,10 @@ internal class BehovløserTest {
             "spleisBehovId" : "spleisBehovId",
             "vedtaksperiodeId" : "vedtaksperiodeId",
             "fødselsnummer" : "fnr",
-            "omsorgspengerFom" : "2017-05-18",
-            "omsorgspengerTom" : "2020-05-18"
+            "Omsorgspenger": {
+                "omsorgspengerFom" : "2017-05-18",
+                "omsorgspengerTom" : "2020-05-18"
+            }
         }
         """
 
@@ -195,8 +207,10 @@ internal class BehovløserTest {
             "spleisBehovId" : "spleisBehovId",
             "vedtaksperiodeId" : "vedtaksperiodeId",
             "fødselsnummer" : "ikkeTilgang",
-            "omsorgspengerFom" : "2017-05-18",
-            "omsorgspengerTom" : "2020-05-18"
+            "Omsorgspenger": {
+                "omsorgspengerFom" : "2017-05-18",
+                "omsorgspengerTom" : "2020-05-18"
+            }
         }
         """
 
@@ -210,8 +224,10 @@ internal class BehovløserTest {
             "spleisBehovId" : "spleisBehovId",
             "vedtaksperiodeId" : "vedtaksperiodeId",
             "fødselsnummer" : "fnr",
-            "opplæringspengerFom" : "2017-05-18",
-            "opplæringspengerTom" : "2020-05-18"
+            "Opplæringspenger": {
+                "opplæringspengerFom" : "2017-05-18",
+                "opplæringspengerTom" : "2020-05-18"
+            }
         }
         """
 
@@ -225,8 +241,10 @@ internal class BehovløserTest {
             "spleisBehovId" : "spleisBehovId",
             "vedtaksperiodeId" : "vedtaksperiodeId",
             "fødselsnummer" : "ikkeTilgang",
-            "opplæringspengerFom" : "2017-05-18",
-            "opplæringspengerTom" : "2020-05-18"
+            "Opplæringspenger": {
+                "opplæringspengerFom" : "2017-05-18",
+                "opplæringspengerTom" : "2020-05-18"
+            }
         }
         """
 

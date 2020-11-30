@@ -24,8 +24,8 @@ internal class Opplæringspengerløser(
             validate { it.requireKey("@id") }
             validate { it.requireKey("fødselsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.require("opplæringspengerFom", JsonNode::asLocalDate) }
-            validate { it.require("opplæringspengerTom", JsonNode::asLocalDate) }
+            validate { it.require("$behov.opplæringspengerFom", JsonNode::asLocalDate) }
+            validate { it.require("$behov.opplæringspengerTom", JsonNode::asLocalDate) }
         }.register(this)
     }
 
@@ -40,8 +40,8 @@ internal class Opplæringspengerløser(
             packet["@id"].asText(),
             packet["vedtaksperiodeId"].asText(),
             packet["fødselsnummer"].asText(),
-            packet["opplæringspengerFom"].asLocalDate(),
-            packet["opplæringspengerTom"].asLocalDate()
+            packet["$behov.opplæringspengerFom"].asLocalDate(),
+            packet["$behov.opplæringspengerTom"].asLocalDate()
         ).let { løsning ->
             packet["@løsning"] = mapOf(
                 behov to løsning
