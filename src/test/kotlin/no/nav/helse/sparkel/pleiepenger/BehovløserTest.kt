@@ -26,21 +26,15 @@ internal class BehovløserTest {
     private var sendteMeldinger = mutableListOf<JsonNode>()
     private lateinit var service: InfotrygdService
 
-    private val context = object : RapidsConnection.MessageContext {
-        override fun send(message: String) {
-            sendteMeldinger.add(objectMapper.readTree(message))
-        }
-
-        override fun send(key: String, message: String) {}
-    }
-
     private val rapid = object : RapidsConnection() {
 
         fun sendTestMessage(message: String) {
-            listeners.forEach { it.onMessage(message, context) }
+            listeners.forEach { it.onMessage(message, this) }
         }
 
-        override fun publish(message: String) {}
+        override fun publish(message: String) {
+            sendteMeldinger.add(objectMapper.readTree(message))
+        }
 
         override fun publish(key: String, message: String) {}
 

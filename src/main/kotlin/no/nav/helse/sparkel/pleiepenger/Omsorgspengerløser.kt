@@ -29,11 +29,11 @@ internal class Omsorgspengerløser(
         }.register(this)
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         sikkerlogg.error("forstod ikke $behov med melding\n${problems.toExtendedReport()}")
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         sikkerlogg.info("mottok melding: ${packet.toJson()}")
         infotrygdService.løsningForBehov(
             Stønadsperiode.Stønadstype.OMSORGSPENGER,
@@ -46,7 +46,7 @@ internal class Omsorgspengerløser(
             packet["@løsning"] = mapOf(
                 behov to løsning
             )
-            context.send(packet.toJson().also { json ->
+            context.publish(packet.toJson().also { json ->
                 sikkerlogg.info(
                     "sender svar {} for {}:\n\t{}",
                     keyValue("id", packet["@id"].asText()),
